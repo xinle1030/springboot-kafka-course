@@ -12,23 +12,21 @@ public class KafkaDatabaseConsumer {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(KafkaDatabaseConsumer.class);
 
+    // inject repository here
     private WikimediaDataRepository dataRepository;
 
     public KafkaDatabaseConsumer(WikimediaDataRepository dataRepository) {
         this.dataRepository = dataRepository;
     }
 
-    @KafkaListener(
-            topics = "${spring.kafka.topic.name}",
-            groupId = "${spring.kafka.consumer.group-id}"
-    )
-    public void consume(String eventMessage){
+    @KafkaListener(topics = "${spring.kafka.topic.name}", groupId = "${spring.kafka.consumer.group-id}")
+    public void consume(String eventMessage) {
 
         LOGGER.info(String.format("Event message received -> %s", eventMessage));
 
         WikimediaData wikimediaData = new WikimediaData();
         wikimediaData.setWikiEventData(eventMessage);
 
-        dataRepository.save(wikimediaData);
+        dataRepository.save(wikimediaData); // save the wikimedia object
     }
 }

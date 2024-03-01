@@ -27,12 +27,23 @@ public class WikimediaChangesProducer {
 
     public void sendMessage() throws InterruptedException {
         // to read real time stream data from wikimedia, we use event source
+        // need libraries: okHttp-eventsource, okhttp (to create event source and read
+        // real time stream data),
+        // jackson-core, jackson-databind (to deal with JSON data)
+
+        // need a separate event handler class to handle the event
         EventHandler eventHandler = new WikimediaChangesHandler(kafkaTemplate, topicName);
+
+        // create event source from the event handler to connect to the source url
+        // EventSource.Builder is used to configure it with the eventHandler and the URI.
+        // event source get all the real time stream data from source, and trigger the respective handler method
         String url = "https://stream.wikimedia.org/v2/stream/recentchange";
         EventSource.Builder builder = new EventSource.Builder(eventHandler, URI.create(url));
         EventSource eventSource = builder.build();
+
+        // starts the EventSource, initiating the connection to the Wikimedia API stream
         eventSource.start();
 
-        TimeUnit.MINUTES.sleep(10);
+        TimeUnit.MINUTES.sleep(10); // sleep for 10min
     }
 }

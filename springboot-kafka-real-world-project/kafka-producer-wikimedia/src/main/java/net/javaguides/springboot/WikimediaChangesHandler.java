@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.kafka.core.KafkaTemplate;
 
+// To handle event and read real time stream data
 public class WikimediaChangesHandler implements EventHandler {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(WikimediaChangesHandler.class);
@@ -28,11 +29,13 @@ public class WikimediaChangesHandler implements EventHandler {
 
     }
 
+    // Whenever there is a new event on Wikimedia, this onMessage handler will be
+    // triggered to read the event
     @Override
     public void onMessage(String s, MessageEvent messageEvent) throws Exception {
         LOGGER.info(String.format("event data -> %s", messageEvent.getData()));
 
-        kafkaTemplate.send(topic, messageEvent.getData());
+        kafkaTemplate.send(topic, messageEvent.getData()); // send the event data to the topic
     }
 
     @Override
